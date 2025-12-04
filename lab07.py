@@ -1,100 +1,73 @@
-import math
+estudiantes = []
 
-def normalizar_py(lista, modo):
-    """
-    Normaliza una lista de números reales usando Python puro.
+def agregar_estudiante():
+    nombre = input("Nombre: ")
+    edad = int(input("Edad: "))
+    promedio = float(input("Promedio: "))
+    estudiante = {"nombre": nombre, "edad": edad, "promedio": promedio}
+    estudiantes.append(estudiante)
+    print("Estudiante agregado.\n")
 
-    Args:
-        lista (list): La lista de números a normalizar.
-        modo (str): El modo de normalización ('minmax', 'zscore', 'unit').
+def mostrar_estudiantes():
+    if not estudiantes:
+        print("No hay estudiantes registrados.\n")
+        return
+    for e in estudiantes:
+        print("Nombre:", e["nombre"], " Edad:", e["edad"], " Promedio:", e["promedio"])
+    print()
 
-    Returns:
-        list: La lista normalizada.
-    """
-    # 1. Validación del modo
-    if modo not in ["minmax", "zscore", "unit"]:
-        print(f"Error: Modo de normalización '{modo}' no válido.")
-        return []
+def mejor_promedio():
+    if not estudiantes:
+        print("No hay estudiantes registrados.\n")
+        return
+    mejor = max(estudiantes, key=lambda x: x["promedio"])
+    print("Estudiante con mejor promedio:")
+    print("Nombre:", mejor["nombre"], " Edad:", mejor["edad"], " Promedio:", mejor["promedio"], "\n")
 
-    # Se trabaja con una copia de la lista para no modificar la original
-    datos = lista[:] 
-    
-    # Manejo de listas vacías
-    if not datos:
-        return []
+def buscar_por_nombre():
+    nombre = input("Nombre a buscar: ")
+    encontrado = False
+    for e in estudiantes:
+        if e["nombre"].lower() == nombre.lower():
+            print("Nombre:", e["nombre"], " Edad:", e["edad"], " Promedio:", e["promedio"], "\n")
+            encontrado = True
+    if not encontrado:
+        print("No encontrado.\n")
 
-    # -------------------
-    # MODO MINMAX
-    # -------------------
-    if modo == "minmax":
-        min_val = min(datos)
-        max_val = max(datos)
-        
-        rango = max_val - min_val
-        
-        # Manejo de división por cero (si todos los valores son iguales)
-        if rango == 0:
-            return [0.0] * len(datos) # Retorna ceros si todos son iguales
-        
-        return [(x - min_val) / rango for x in datos]
+def eliminar_por_nombre():
+    nombre = input("Nombre a eliminar: ")
+    global estudiantes
+    nueva_lista = [e for e in estudiantes if e["nombre"].lower() != nombre.lower()]
+    if len(nueva_lista) != len(estudiantes):
+        estudiantes = nueva_lista
+        print("Estudiante eliminado.\n")
+    else:
+        print("No se encontró el estudiante.\n")
 
-    # -------------------
-    # MODO ZSCORE
-    # -------------------
-    elif modo == "zscore":
-        
-        # Cálculo de la media
-        media = sum(datos) / len(datos)
-        
-        # Cálculo de la varianza (suma de cuadrados de las diferencias)
-        varianza = sum([(x - media)**2 for x in datos]) / len(datos)
-        
-        # Cálculo de la desviación estándar
-        desv_est = math.sqrt(varianza)
-        
-        # Manejo de división por cero (si todos los valores son iguales)
-        if desv_est == 0:
-            return [0.0] * len(datos) # Retorna ceros si todos son iguales
-        
-        return [(x - media) / desv_est for x in datos]
+# menu
+while True:
+    print("MENU:")
+    print("1. Agregar estudiante")
+    print("2. Mostrar estudiantes")
+    print("3. Mostrar estudiante con mejor promedio")
+    print("4. Buscar por nombre")
+    print("5. Eliminar por nombre")
+    print("6. Salir")
 
-    # -------------------
-    # MODO UNIT (Vector Unitario)
-    # -------------------
-    elif modo == "unit":
-        
-        # Cálculo de la norma (magnitud o longitud del vector)
-        # ||v|| = sqrt(x1^2 + x2^2 + ... + xn^2)
-        norma = math.sqrt(sum([x**2 for x in datos]))
-        
-        # Manejo de división por cero (si la norma es cero, es un vector cero)
-        if norma == 0:
-            return [0.0] * len(datos) # Retorna un vector cero
-        
-        return [x / norma for x in datos]
+    opcion = input("Elija una opción: ")
 
-
-# --- Pruebas con los datos proporcionados ---
-datos = [10, 20, 30]
-
-print("--- Versión Python Puro ---")
-print(f"Datos Originales: {datos}")
-
-# Prueba 1: MinMax
-resultado_minmax = normalizar_py(datos, "minmax")
-print(f"Modo 'minmax': {resultado_minmax}") 
-
-# Prueba 2: ZScore
-resultado_zscore = normalizar_py(datos, "zscore")
-print(f"Modo 'zscore': {resultado_zscore}")
-
-# Prueba 3: Unit
-resultado_unit = normalizar_py(datos, "unit")
-print(f"Modo 'unit': {resultado_unit}")
-
-# Prueba de validación de modo
-normalizar_py(datos, "otro")
-
-# Prueba de manejo de división por cero
-datos_cero = [5, 5, 5]
-print(f"\nDivisión por cero (MinMax, ZScore): {normalizar_py(datos_cero, 'minmax')}")
+    if opcion == "1":
+        agregar_estudiante()
+    elif opcion == "2":
+        mostrar_estudiantes()
+    elif opcion == "3":
+        mejor_promedio()
+    elif opcion == "4":
+        buscar_por_nombre()
+    elif opcion == "5":
+        eliminar_por_nombre()
+    elif opcion == "6":
+        print("Saliendo...")
+        break
+    else:
+        print("Opción inválida.\n")
